@@ -4,6 +4,7 @@ import com.example.retrofit_sample.models.Post
 import com.example.retrofit_sample.models.User
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.PUT
@@ -30,6 +31,12 @@ interface BlogApi {
     // request body only needs to contain the specific changes to the resource
     @PATCH("posts/{id}")
     suspend fun patchPost(@Path("id") postId: Int, @Body params: Map<String, String>): Post
+
+    @DELETE("posts/{id}")
+    suspend fun deletePost(@Path("id") postId: Int)
+
+    @DELETE("posts/")
+    suspend fun createPost(@Body post: Post): Post
 
     // For Callback style approach
     @GET("posts/{id}")

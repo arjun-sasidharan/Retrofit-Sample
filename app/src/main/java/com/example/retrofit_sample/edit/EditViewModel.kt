@@ -18,6 +18,11 @@ class EditViewModel : ViewModel() {
     val currentStatus: LiveData<ResultStatus>
         get() = _currentStatus
 
+    private val _wasDeletionSuccessful = MutableLiveData<Boolean>(false)
+    val wasDeletionSuccessful: LiveData<Boolean>
+        get() = _wasDeletionSuccessful
+
+
     fun updatePost(postId: Int, newPostData: Post) {
         viewModelScope.launch {
             try {
@@ -49,6 +54,18 @@ class EditViewModel : ViewModel() {
     }
 
     fun deletePost(postId: Int) {
-        // TODO: send DELETE request
+        viewModelScope.launch {
+            try {
+                _currentStatus.value = ResultStatus.WORKING
+                RetrofitInstance.api.deletePost(postId)
+                _post.value = null
+                _wasDeletionSuccessful.value = true
+                _currentStatus.value = ResultStatus.SUCCESS
+            } catch (e: Exception) {
+                _wasDeletionSuccessful.value = false
+                _currentStatus.value = ResultStatus.ERROR
+            }
+        }
     }
+
 }

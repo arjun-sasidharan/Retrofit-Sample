@@ -1,12 +1,15 @@
 package com.example.retrofit_sample.edit
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.retrofit_sample.MainActivity
 import com.example.retrofit_sample.databinding.ActivityEditBinding
 import com.example.retrofit_sample.detail.EXTRA_POST
 import com.example.retrofit_sample.models.Post
@@ -63,6 +66,15 @@ class EditActivity : AppCompatActivity() {
                 }
             }
         })
+
+        viewModel.wasDeletionSuccessful.observe(this) {wasDeletionSuccessful ->
+            if (wasDeletionSuccessful) {
+                Toast.makeText(this, "Deleted post successfully", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
 
         binding.btnUpdatePut.setOnClickListener {
             Log.i(TAG, "Update via PUT")
