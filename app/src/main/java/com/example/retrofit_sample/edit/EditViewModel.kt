@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.retrofit_sample.api.RetrofitInstance
 import com.example.retrofit_sample.models.Post
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import java.lang.Exception
 
 class EditViewModel : ViewModel() {
@@ -65,6 +68,14 @@ class EditViewModel : ViewModel() {
                 _wasDeletionSuccessful.value = false
                 _currentStatus.value = ResultStatus.ERROR
             }
+        }
+    }
+
+    // Creating our own coroutine scope to make network request
+    private fun createPost() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val localNewPost = Post(2, 32, "My post title", "post id #32")
+            val newPost = RetrofitInstance.api.createPost(localNewPost)
         }
     }
 
