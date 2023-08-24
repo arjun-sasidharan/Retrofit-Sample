@@ -7,6 +7,6 @@ data class Post(
     val userId: Int,
     val id: Int,
     val title: String,
-    @field:Json(name = "body") val content: String
+    @Json(name = "body") val content: String
 ) : Serializable
 // extending with serializable, so can be passed as intent extra
