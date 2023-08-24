@@ -27,7 +27,7 @@ class EditActivity : AppCompatActivity() {
         val post = intent.getSerializableExtra(EXTRA_POST) as Post
         title = "Editing Post #${post.id}"
         binding.etTitle.setText(post.title)
-        binding.etContent.setText(post.body)
+        binding.etContent.setText(post.content)
 
         viewModel = ViewModelProvider(this).get(EditViewModel::class.java)
         viewModel.post.observe(this, Observer { updatedPost ->
@@ -36,7 +36,7 @@ class EditActivity : AppCompatActivity() {
                 return@Observer
             }
             binding.tvUpdatedTitle.text = updatedPost.title
-            binding.tvUpdatedContent.text = updatedPost.body
+            binding.tvUpdatedContent.text = updatedPost.content
             binding.clPostResult.visibility = View.VISIBLE
         })
         viewModel.currentStatus.observe(this, Observer { currentStatus ->
