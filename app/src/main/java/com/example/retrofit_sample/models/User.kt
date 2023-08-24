@@ -1,5 +1,8 @@
 package com.example.retrofit_sample.models
 
+import androidx.annotation.Keep
+
+@Keep
 data class User(
     val id: Int,
     val name: String,
@@ -8,6 +11,7 @@ data class User(
     val company: Company,
     val website: String
 ) {
+    @Keep
     data class Company(
         val name: String,
         val catchPhrase: String,
