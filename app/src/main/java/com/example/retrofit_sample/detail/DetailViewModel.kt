@@ -9,6 +9,9 @@ import com.example.retrofit_sample.api.RetrofitInstance
 import com.example.retrofit_sample.models.Post
 import com.example.retrofit_sample.models.User
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 private const val TAG = "DetailViewModel"
 class DetailViewModel: ViewModel() {
@@ -26,6 +29,7 @@ class DetailViewModel: ViewModel() {
 
     fun getPostDetails(postId: Int) {
         val api = RetrofitInstance.api
+        // Coroutine style
         viewModelScope.launch {
             _isLoading.value = true
             val fetchedPost = api.getPost(postId)
@@ -35,5 +39,41 @@ class DetailViewModel: ViewModel() {
             _user.value = fetchedUser
             _isLoading.value = false
         }
+        // Callback style
+//        fetchDataCallbackStyle(postId)
+    }
+
+    private fun fetchDataCallbackStyle(postId: Int) {
+        val api = RetrofitInstance.api
+        _isLoading.value = true
+        api.getPostViaCallback(postId).enqueue(object : Callback<Post> {
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                if (response.isSuccessful) {
+                    val fetchedPost = response.body()!!
+                    // second api call
+                    api.getUserViaCallback(fetchedPost.userId).enqueue(object :Callback<User> {
+                        override fun onResponse(call: Call<User>, response: Response<User>) {
+                            if (response.isSuccessful) {
+                                val fetchedUser = response.body()!!
+                                _post.value = fetchedPost
+                                _user.value = fetchedUser
+                                _isLoading.value = false
+                            } else {
+                                Log.e(TAG, "response unsuccessful, code ${response.code()}", )
+                            }
+                        }
+
+                        override fun onFailure(call: Call<User>, t: Throwable) {
+                            Log.e(TAG, "onFailure: $t", )
+                        }
+                    })
+                } else {
+                    Log.e(TAG, "response unsuccessful, code ${response.code()}", )
+                }
+            }
+            override fun onFailure(call: Call<Post>, t: Throwable) {
+                Log.e(TAG, "onFailure: $t", )
+            }
+        })
     }
 }
