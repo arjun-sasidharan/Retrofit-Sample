@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.retrofit_sample.api.RetrofitInstance
 import com.example.retrofit_sample.models.Post
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class EditViewModel : ViewModel() {
     private val _post: MutableLiveData<Post?> = MutableLiveData()
@@ -19,14 +20,32 @@ class EditViewModel : ViewModel() {
 
     fun updatePost(postId: Int, newPostData: Post) {
         viewModelScope.launch {
-            _post.value = null
-            val updatedPost = RetrofitInstance.api.updatePost(postId, newPostData)
-            _post.value = updatedPost
+            try {
+                _post.value = null
+                _currentStatus.value = ResultStatus.WORKING
+                val updatedPost = RetrofitInstance.api.updatePost(postId, newPostData)
+                _post.value = updatedPost
+                _currentStatus.value = ResultStatus.SUCCESS
+            } catch (e: Exception) {
+                _currentStatus.value = ResultStatus.ERROR
+            }
         }
     }
 
     fun patchPost(postId: Int, title: String, body: String) {
-        // TODO: send PATCH request
+        viewModelScope.launch {
+            try {
+                _currentStatus.value = ResultStatus.WORKING
+                _post.value = null
+                val patchedPost =
+                    RetrofitInstance.api.patchPost(postId, mapOf("title" to title, "body" to body))
+                _post.value = patchedPost
+                _currentStatus.value = ResultStatus.SUCCESS
+            } catch (e: Exception) {
+                _currentStatus.value = ResultStatus.ERROR
+            }
+
+        }
     }
 
     fun deletePost(postId: Int) {

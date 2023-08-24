@@ -5,6 +5,7 @@ import com.example.retrofit_sample.models.User
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -25,6 +26,10 @@ interface BlogApi {
     // request body contains the complete new post
     @PUT("posts/{id}")
     suspend fun updatePost(@Path("id") postId: Int, @Body post: Post): Post
+
+    // request body only needs to contain the specific changes to the resource
+    @PATCH("posts/{id}")
+    suspend fun patchPost(@Path("id") postId: Int, @Body params: Map<String, String>): Post
 
     // For Callback style approach
     @GET("posts/{id}")
