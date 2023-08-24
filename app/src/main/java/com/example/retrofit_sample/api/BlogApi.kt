@@ -3,7 +3,9 @@ package com.example.retrofit_sample.api
 import com.example.retrofit_sample.models.Post
 import com.example.retrofit_sample.models.User
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -19,6 +21,10 @@ interface BlogApi {
 
     @GET("users/{id}")
     suspend fun getUser(@Path("id") userId: Int): User
+
+    // request body contains the complete new post
+    @PUT("posts/{id}")
+    suspend fun updatePost(@Path("id") postId: Int, @Body post: Post): Post
 
     // For Callback style approach
     @GET("posts/{id}")
