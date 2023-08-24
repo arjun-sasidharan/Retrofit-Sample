@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -37,6 +38,15 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "isLoading $isLoading")
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         })
+
+        viewModel.errorMessage.observe(this) { errorMessage ->
+            if (errorMessage == null) {
+                binding.tvError.visibility = View.GONE
+            } else {
+                binding.tvError.visibility = View.VISIBLE
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+        }
 
         blogPostAdapter = BlogPostAdapter(
             this, blogPosts,
