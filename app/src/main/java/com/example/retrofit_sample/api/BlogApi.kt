@@ -6,6 +6,8 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -18,6 +20,8 @@ interface BlogApi {
         @Query("_page") page: Int = 1, @Query("_limit") limit: Int = 10
     ): List<Post>
 
+    // if want to add header for a single api only
+    @Headers("Platform: Android")
     @GET("posts/{id}")
     suspend fun getPost(@Path("id") postId: Int): Post
 
@@ -32,8 +36,10 @@ interface BlogApi {
     @PATCH("posts/{id}")
     suspend fun patchPost(@Path("id") postId: Int, @Body params: Map<String, String>): Post
 
+
+    // passing header dynamicaly
     @DELETE("posts/{id}")
-    suspend fun deletePost(@Path("id") postId: Int)
+    suspend fun deletePost(@Header("Auth-Token") auth: String, @Path("id") postId: Int)
 
     @DELETE("posts/")
     suspend fun createPost(@Body post: Post): Post
