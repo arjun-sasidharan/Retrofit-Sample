@@ -71,12 +71,5 @@ class EditViewModel : ViewModel() {
         }
     }
 
-    // Creating our own coroutine scope to make network request
-    private fun createPost() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val localNewPost = Post(2, 32, "My post title", "post id #32")
-            val newPost = RetrofitInstance.api.createPost(localNewPost)
-        }
-    }
 
 }

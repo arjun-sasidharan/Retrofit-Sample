@@ -10,9 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.retrofit_sample.MainActivity
+import com.example.retrofit_sample.api.RetrofitInstance
 import com.example.retrofit_sample.databinding.ActivityEditBinding
 import com.example.retrofit_sample.detail.EXTRA_POST
 import com.example.retrofit_sample.models.Post
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "EditActivity"
 
@@ -24,6 +28,7 @@ class EditActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        createPost()
         val post = intent.getSerializableExtra(EXTRA_POST) as Post
         title = "Editing Post #${post.id}"
         binding.etTitle.setText(post.title)
@@ -67,7 +72,7 @@ class EditActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.wasDeletionSuccessful.observe(this) {wasDeletionSuccessful ->
+        viewModel.wasDeletionSuccessful.observe(this) { wasDeletionSuccessful ->
             if (wasDeletionSuccessful) {
                 Toast.makeText(this, "Deleted post successfully", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, MainActivity::class.java)
@@ -101,6 +106,15 @@ class EditActivity : AppCompatActivity() {
         binding.btnDelete.setOnClickListener {
             Log.i(TAG, "DELETE")
             viewModel.deletePost(post.id)
+        }
+    }
+
+    // Creating our own coroutine scope to make network request
+    private fun createPost() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val localNewPost = Post(2, 32, "My post title", "post id #32")
+            val newPost = RetrofitInstance.api.createPost(localNewPost)
+            val urlEncodePost= RetrofitInstance.api.createPostUrlEncode(4, "New title", "Post content")
         }
     }
 }
