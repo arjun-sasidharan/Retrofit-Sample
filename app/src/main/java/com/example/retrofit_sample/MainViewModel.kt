@@ -22,7 +22,7 @@ class MainViewModel : ViewModel() {
     fun getPosts() {
         viewModelScope.launch {
             _isLoading.value = true
-            val fetchedPost = RetrofitInstance.api.getPost()
+            val fetchedPost = RetrofitInstance.api.getPosts()
             _posts.value = fetchedPost
             _isLoading.value = false
         }

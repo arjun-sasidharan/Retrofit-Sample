@@ -1,13 +1,15 @@
 package com.example.retrofit_sample
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.retrofit_sample.databinding.ActivityMainBinding
+import com.example.retrofit_sample.detail.DetailActivity
 import com.example.retrofit_sample.models.Post
 
 private const val TAG = "MainActivity"
@@ -25,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        viewModel.posts.observe(this, Observer {posts ->
+        viewModel.posts.observe(this, Observer { posts ->
             Log.i(TAG, "Number of posts: ${posts.size}")
             blogPosts.addAll(posts)
             blogPostAdapter.notifyDataSetChanged()
@@ -36,7 +38,16 @@ class MainActivity : AppCompatActivity() {
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         })
 
-        blogPostAdapter = BlogPostAdapter(this, blogPosts)
+        blogPostAdapter = BlogPostAdapter(
+            this, blogPosts,
+            object : BlogPostAdapter.ItemClickListener {
+                override fun onItemClick(post: Post) {
+                    val intent = Intent(this@MainActivity, DetailActivity::class.java)
+                    intent.putExtra(EXTRA_POST_ID, post.id)
+                    startActivity(intent)
+                }
+            }
+        )
         binding.rvPosts.adapter = blogPostAdapter
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
 

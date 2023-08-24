@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.retrofit_sample.EXTRA_POST_ID
 import com.example.retrofit_sample.R
 import com.example.retrofit_sample.databinding.ActivityDetailBinding
 import com.example.retrofit_sample.edit.EditActivity
@@ -24,9 +25,9 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val postId = intent.getIntExtra(EXTRA_POST_ID, -1)
 
         viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
-        val postId = 1
         viewModel.isLoading.observe(this, Observer { isLoading ->
             binding.detailProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.clContent.visibility = if (isLoading) View.GONE else View.VISIBLE
