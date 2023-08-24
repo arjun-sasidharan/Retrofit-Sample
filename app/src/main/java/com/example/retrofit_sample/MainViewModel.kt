@@ -25,14 +25,19 @@ class MainViewModel : ViewModel() {
     val errorMessage: LiveData<String?>
         get() = _errorMessage
 
+    private var currentPage = 1
+
     fun getPosts() {
         viewModelScope.launch {
+            Log.i(TAG, "Query with page $currentPage")
             _errorMessage.value = null
             _isLoading.value = true
             try {
-                val fetchedPost = RetrofitInstance.api.getPosts()
+                val fetchedPost = RetrofitInstance.api.getPosts(currentPage)
+                currentPage += 1
                 Log.i(TAG, "Got posts: $fetchedPost")
-                _posts.value = fetchedPost
+                val currentPost = _posts.value ?: emptyList()
+                _posts.value = currentPost + fetchedPost
             } catch (e: Exception) {
                 _errorMessage.value = e.message
                 Log.e(TAG, "Exception $e")
